@@ -107,12 +107,52 @@ footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color
 .letter-title{font-family:var(--display);font-size:1.32rem;line-height:1.25;margin:0 0 .85rem;color:var(--cream)}
 .letter-title:focus{outline:none;border-bottom:1px solid rgba(231,154,166,.5)}
 .btn.sent{border-color:var(--gold);color:var(--gold);letter-spacing:.18em}
+
+/* ---------- atmosphere: sakura petals + golden sparkles ---------- */
+#petals{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+footer{position:relative;z-index:1}
+.count{position:relative}
+.count:after,.ms:after{content:'';position:absolute;border-radius:var(--radius);pointer-events:none;transition:box-shadow .4s ease}
+.count:after{inset:-.6rem -.9rem}
+.ms:after{inset:-.85rem -.9rem}
+.count:hover:after,.count:focus-within:after{box-shadow:0 0 0 1px rgba(231,154,166,.32),0 0 30px rgba(201,162,39,.18)}
+.ms:hover:after,.ms:focus-within:after{box-shadow:0 0 0 1px rgba(231,154,166,.30),0 0 34px rgba(231,154,166,.14)}
+
+/* ---------- flip cards ---------- */
+.flips{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-top:1.7rem}
+@media(min-width:720px){.flips{grid-template-columns:repeat(4,1fr)}}
+.flip{position:relative;aspect-ratio:3/4.1;border:0;background:none;padding:0;cursor:pointer;perspective:1000px;font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+.flip-in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.2,.7,.2,1)}
+.flip[aria-pressed="true"] .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--radius);
+  padding:.9rem;display:flex;flex-direction:column;justify-content:space-between;text-align:left;
+  border:1px solid rgba(231,154,166,.30);background:rgba(36,24,32,.78);box-shadow:0 14px 34px -26px rgba(0,0,0,.9);transition:box-shadow .35s ease}
+.face.back{transform:rotateY(180deg);border-color:rgba(201,162,39,.45);background:rgba(52,32,41,.94)}
+.face .n{font-size:.56rem;letter-spacing:.22em;color:var(--gold-soft)}
+.face .h{font-family:var(--display);font-size:1rem;line-height:1.28;color:var(--cream)}
+.face .t{font-size:.85rem;line-height:1.55;color:var(--cream)}
+.face .tap{font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint)}
+.flip:hover .face,.flip:focus-visible .face{box-shadow:0 0 0 1px rgba(231,154,166,.42),0 0 30px rgba(231,154,166,.18)}
+
+/* ---------- kiss button, hearts, toast ---------- */
+.kisswrap{display:flex;justify-content:center;margin:2.4rem 0 0}
+.btn.kiss{background:rgba(231,154,166,.16);border:1px solid var(--rose);color:var(--cream);box-shadow:0 0 26px rgba(231,154,166,.22)}
+.btn.kiss:hover,.btn.kiss:focus-visible{box-shadow:0 0 40px rgba(231,154,166,.42)}
+#hearts{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:61}
+.toast{position:fixed;left:50%;bottom:1.7rem;transform:translate(-50%,14px);max-width:min(92vw,26rem);
+  padding:.85rem 1.1rem;border-radius:999px;border:1px solid rgba(201,162,39,.45);background:rgba(30,20,26,.96);
+  color:var(--cream);font-size:.8rem;line-height:1.45;text-align:center;opacity:0;pointer-events:none;
+  transition:opacity .35s ease,transform .35s ease;z-index:70;box-shadow:0 18px 40px -20px #000}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 <canvas id="confetti"></canvas>
+<canvas id="petals"></canvas>
+<canvas id="hearts"></canvas>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <header class="hero">
   <p class="eyebrow">A little corner of the internet</p>
@@ -203,6 +243,38 @@ footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color
     </ol>
   </section>
 
+  <section id="secrets">
+    <p class="eyebrow rv">Tap for a secret note</p>
+    <h2 class="rv">Little things about you that <em>drive me crazy</em></h2>
+    <p class="lede rv">Four cards. Open one, or open them all.</p>
+    <div class="flips">
+      <button class="flip rv" type="button" aria-pressed="false">
+        <span class="flip-in">
+          <span class="face front"><span class="n">01</span><span class="h">Your eyes</span><span class="tap">Tap for a secret note</span></span>
+          <span class="face back"><span class="n">01</span><span class="t">The way you look deep into my eyes—it melts me every single time.</span></span>
+        </span>
+      </button>
+      <button class="flip rv" type="button" aria-pressed="false">
+        <span class="flip-in">
+          <span class="face front"><span class="n">02</span><span class="h">Our first kiss</span><span class="tap">Tap for a secret note</span></span>
+          <span class="face back"><span class="n">02</span><span class="t">Our first kiss... honestly, it still replays in my head.</span></span>
+        </span>
+      </button>
+      <button class="flip rv" type="button" aria-pressed="false">
+        <span class="flip-in">
+          <span class="face front"><span class="n">03</span><span class="h">Irresistible</span><span class="tap">Tap for a secret note</span></span>
+          <span class="face back"><span class="n">03</span><span class="t">How completely irresistible you are—I never stood a chance.</span></span>
+        </span>
+      </button>
+      <button class="flip rv" type="button" aria-pressed="false">
+        <span class="flip-in">
+          <span class="face front"><span class="n">04</span><span class="h">You chose me</span><span class="tap">Tap for a secret note</span></span>
+          <span class="face back"><span class="n">04</span><span class="t">Knowing you chose me as your one and only makes me feel like the luckiest guy alive.</span></span>
+        </span>
+      </button>
+    </div>
+  </section>
+
   <hr class="rule">
 
   <section id="birthday">
@@ -240,6 +312,10 @@ footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color
       <button class="btn gold" id="luck">Tap to Send Good Luck</button>
     </div>
   </section>
+
+  <div class="kisswrap">
+    <button class="btn kiss" id="kiss" type="button">Tap to Send a Kiss</button>
+  </div>
 
   <hr class="rule">
 </div>
@@ -422,6 +498,179 @@ footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color
       }, 2600);
     });
   }
+
+  // ---------- flip cards ----------
+  Array.prototype.forEach.call(document.querySelectorAll('.flip'), function (card) {
+    function toggle() {
+      card.setAttribute('aria-pressed', card.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+    }
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); toggle(); }
+    });
+  });
+
+  // ---------- atmosphere: sakura petals + golden sparkles ----------
+  var pc = document.getElementById('petals');
+  var pctx = pc ? pc.getContext('2d') : null;
+  var petals = [], sparks = [], pRaf = null, pLast = 0;
+  function atmosSize() {
+    if (!pc) return;
+    pc.width = Math.floor(window.innerWidth * dpr);
+    pc.height = Math.floor(window.innerHeight * dpr);
+  }
+  function newPetal(w, h, anywhere) {
+    return {
+      x: Math.random() * w,
+      y: anywhere ? Math.random() * h : -30 * dpr,
+      r: (4 + Math.random() * 6) * dpr,
+      vy: (14 + Math.random() * 20) * dpr,
+      vx: (Math.random() - 0.5) * 12 * dpr,
+      sw: Math.random() * 6.28,
+      rot: Math.random() * 6.28,
+      vr: (Math.random() - 0.5) * 1.1,
+      a: 0.22 + Math.random() * 0.3
+    };
+  }
+  function seedAtmos() {
+    atmosSize();
+    petals = []; sparks = [];
+    var w = pc.width, h = pc.height;
+    var pn = window.innerWidth < 520 ? 9 : 16;
+    var sn = window.innerWidth < 520 ? 8 : 14;
+    for (var i = 0; i < pn; i++) petals.push(newPetal(w, h, true));
+    for (var j = 0; j < sn; j++) sparks.push({ x: Math.random() * w, y: Math.random() * h, r: (0.8 + Math.random() * 1.5) * dpr, ph: Math.random() * 6.28, sp: 0.5 + Math.random() * 0.9 });
+  }
+  function drawAtmos(t, once) {
+    pRaf = null;
+    if (!pctx) return;
+    var dt = pLast ? Math.min(0.05, (t - pLast) / 1000) : 0.016;
+    pLast = t;
+    var w = pc.width, h = pc.height;
+    pctx.clearRect(0, 0, w, h);
+    for (var i = 0; i < petals.length; i++) {
+      var p = petals[i];
+      p.sw += dt * 1.1;
+      p.rot += p.vr * dt;
+      p.x += (p.vx + Math.sin(p.sw) * 9 * dpr) * dt;
+      p.y += p.vy * dt;
+      if (p.y - p.r > h) { petals[i] = newPetal(w, h, false); continue; }
+      if (p.x < -40 * dpr) p.x = w + 20 * dpr;
+      if (p.x > w + 40 * dpr) p.x = -20 * dpr;
+      pctx.save();
+      pctx.translate(p.x, p.y);
+      pctx.rotate(p.rot);
+      pctx.globalAlpha = p.a;
+      pctx.fillStyle = '#e79aa6';
+      pctx.beginPath();
+      pctx.ellipse(0, 0, p.r, p.r * 0.58, 0, 0, 6.2832);
+      pctx.fill();
+      pctx.restore();
+    }
+    for (var k = 0; k < sparks.length; k++) {
+      var s = sparks[k];
+      s.ph += dt * s.sp;
+      var a = 0.22 + 0.5 * (0.5 + 0.5 * Math.sin(s.ph));
+      pctx.globalAlpha = a * 0.2;
+      pctx.fillStyle = '#e8c56a';
+      pctx.beginPath(); pctx.arc(s.x, s.y, s.r * 4.5, 0, 6.2832); pctx.fill();
+      pctx.globalAlpha = a;
+      pctx.beginPath(); pctx.arc(s.x, s.y, s.r, 0, 6.2832); pctx.fill();
+    }
+    pctx.globalAlpha = 1;
+    if (!once && !document.hidden) pRaf = requestAnimationFrame(drawAtmos);
+  }
+  if (pctx) {
+    seedAtmos();
+    window.addEventListener('resize', function () { seedAtmos(); });
+    if (reduce) { drawAtmos(performance.now(), true); }
+    else { pRaf = requestAnimationFrame(drawAtmos); }
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { if (pRaf) { cancelAnimationFrame(pRaf); pRaf = null; } }
+      else if (!pRaf && !reduce) { pLast = 0; pRaf = requestAnimationFrame(drawAtmos); }
+    });
+  }
+
+  // ---------- kiss: floating hearts + toast ----------
+  var hc = document.getElementById('hearts');
+  var hctx = hc ? hc.getContext('2d') : null;
+  var hearts = [], hRaf = null, hLast = 0;
+  function heartsSize() {
+    if (!hc) return;
+    hc.width = Math.floor(window.innerWidth * dpr);
+    hc.height = Math.floor(window.innerHeight * dpr);
+  }
+  heartsSize();
+  window.addEventListener('resize', heartsSize);
+  function heartShape(c, x, y, s) {
+    c.beginPath();
+    c.moveTo(x, y + s * 0.55);
+    c.bezierCurveTo(x - s * 1.1, y - s * 0.35, x - s * 0.45, y - s * 1.15, x, y - s * 0.45);
+    c.bezierCurveTo(x + s * 0.45, y - s * 1.15, x + s * 1.1, y - s * 0.35, x, y + s * 0.55);
+    c.closePath();
+  }
+  function drawHearts(t) {
+    hRaf = null;
+    if (!hctx) return;
+    var dt = hLast ? Math.min(0.05, (t - hLast) / 1000) : 0.016;
+    hLast = t;
+    hctx.clearRect(0, 0, hc.width, hc.height);
+    for (var i = hearts.length - 1; i >= 0; i--) {
+      var p = hearts[i];
+      p.ph += dt * 2;
+      p.y += p.vy * dt;
+      p.x += (p.vx + Math.sin(p.ph) * 14 * dpr) * dt;
+      p.a -= dt * 0.16;
+      if (p.a <= 0 || p.y < -60 * dpr) { hearts.splice(i, 1); continue; }
+      hctx.globalAlpha = Math.max(0, p.a);
+      hctx.fillStyle = i % 4 === 0 ? '#c9a227' : '#e79aa6';
+      heartShape(hctx, p.x, p.y, p.s);
+      hctx.fill();
+    }
+    hctx.globalAlpha = 1;
+    if (hearts.length) hRaf = requestAnimationFrame(drawHearts);
+    else hctx.clearRect(0, 0, hc.width, hc.height);
+  }
+  function kissBurst() {
+    if (!hctx) return;
+    heartsSize();
+    var w = hc.width, h = hc.height;
+    var n = window.innerWidth < 520 ? 24 : 38;
+    for (var i = 0; i < n; i++) {
+      hearts.push({
+        x: w * (0.18 + Math.random() * 0.64),
+        y: h + 20 * dpr,
+        vy: -(70 + Math.random() * 120) * dpr,
+        vx: (Math.random() - 0.5) * 46 * dpr,
+        s: (5 + Math.random() * 7) * dpr,
+        a: 0.92,
+        ph: Math.random() * 6.28
+      });
+    }
+    if (!hRaf) { hLast = 0; hRaf = requestAnimationFrame(drawHearts); }
+  }
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(function () { t.classList.remove('on'); }, 4600);
+  }
+  var kissBtn = document.getElementById('kiss');
+  if (kissBtn) {
+    kissBtn.addEventListener('click', function () {
+      if (!reduce) kissBurst();
+      toast('Kiss received by Peter! Counting down the days till I see you.');
+    });
+  }
+
+  window.__atm = {
+    petals: function () { return petals.length; },
+    sparks: function () { return sparks.length; },
+    hearts: function () { return hearts.length; },
+    open: function () { return document.querySelectorAll('.flip[aria-pressed="true"]').length; }
+  };
 })();
 </script>
 </body>
