@@ -665,6 +665,13 @@ footer{position:relative;z-index:1}
     });
   }
 
+  if (location.search.indexOf('flipdemo') > -1) {
+    setTimeout(function () {
+      var c = document.querySelector('.flip');
+      if (c) c.setAttribute('aria-pressed', 'true');
+    }, 400);
+  }
+
   window.__atm = {
     petals: function () { return petals.length; },
     sparks: function () { return sparks.length; },
