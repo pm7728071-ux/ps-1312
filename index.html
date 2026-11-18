@@ -161,6 +161,21 @@ footer{position:relative;z-index:1}
 #capsule.locked > *:not(.lock){visibility:hidden}
 #capsule.locked .lock{opacity:1;visibility:visible}
 #capsule:not(.locked) .lock{opacity:0;visibility:hidden;pointer-events:none}
+
+/* ---------- real photos + reserved heart ---------- */
+.photo{aspect-ratio:4/5}
+.photo img{object-position:50% 16%}
+.photo.emblem{aspect-ratio:4/5;display:grid;place-items:center;gap:.6rem;border-style:solid;
+  border-color:rgba(201,162,39,.32);cursor:default;
+  background:radial-gradient(circle at 50% 42%,rgba(231,154,166,.14),transparent 68%);
+  box-shadow:inset 0 0 44px rgba(231,154,166,.07)}
+.photo.emblem svg{width:2.5rem;height:2.5rem;fill:var(--gold);
+  filter:drop-shadow(0 0 12px rgba(231,154,166,.6)) drop-shadow(0 0 26px rgba(201,162,39,.35));
+  animation:heartGlow 3.6s ease-in-out infinite}
+.photo.emblem small{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);
+  text-align:center;line-height:1.7;padding:0 1rem}
+@keyframes heartGlow{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.08);opacity:1}}
+@media (prefers-reduced-motion:reduce){.photo.emblem svg{animation:none}}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -220,9 +235,9 @@ footer{position:relative;z-index:1}
       <li class="ms rv">
         <span class="chip" contenteditable="true">July 6, 2026</span>
         <h3 contenteditable="true">Love at First Sight</h3>
-        <label class="photo">
+        <label class="photo has">
           <input type="file" accept="image/*" data-photo>
-          <img alt="Love at First Sight">
+          <img src="chapter1.jpg" alt="Patricia — Love at First Sight" loading="lazy">
           <span>Add a photo</span>
         </label>
         <p class="txt" contenteditable="true">The day I first saw you at your home and you walked up to greet me, something changed. It truly felt like love at first sight. From that very first hello, I knew there was something special about you.</p>
@@ -230,9 +245,9 @@ footer{position:relative;z-index:1}
       <li class="ms rv">
         <span class="chip" contenteditable="true">July 31, 2026</span>
         <h3 contenteditable="true">The First Magic</h3>
-        <label class="photo">
+        <label class="photo has">
           <input type="file" accept="image/*" data-photo>
-          <img alt="The First Magic">
+          <img src="chapter2.jpg" alt="Patricia — The First Magic" loading="lazy">
           <span>Add a photo</span>
         </label>
         <p class="txt" contenteditable="true">Talking to you became effortless, and the way you looked deep into my eyes said everything. When I asked if you wanted me and you said yes, that first kiss felt pure magic. I couldn't resist you then, and I still can't now.</p>
@@ -240,9 +255,9 @@ footer{position:relative;z-index:1}
       <li class="ms rv">
         <span class="chip" contenteditable="true">October 23, 2026</span>
         <h3 contenteditable="true">Choosing Each Other Always</h3>
-        <label class="photo">
+        <label class="photo has">
           <input type="file" accept="image/*" data-photo>
-          <img alt="Choosing Each Other Always">
+          <img src="chapter3.jpg" alt="Patricia — Choosing Each Other Always" loading="lazy">
           <span>Add a photo</span>
         </label>
         <p class="txt" contenteditable="true">Even when others tried to get in the way, and even through tough days, you stood by my side. You never compared me to anyone else and chose me, Peter, as your one and only. Being there for you when you are sick or feeling low means everything to me.</p>
@@ -250,11 +265,10 @@ footer{position:relative;z-index:1}
       <li class="ms rv">
         <span class="chip" contenteditable="true">Today &amp; Forever</span>
         <h3 contenteditable="true">My Dream Girl &amp; Our Future</h3>
-        <label class="photo">
-          <input type="file" accept="image/*" data-photo>
-          <img alt="My Dream Girl and Our Future">
-          <span>Add a photo</span>
-        </label>
+        <div class="photo emblem">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.6C12 20.6 3.9 15.6 3.9 9.9A4.6 4.6 0 0 1 12 7.2a4.6 4.6 0 0 1 8.1 2.7c0 5.7-8.1 10.7-8.1 10.7z"/></svg>
+          <small>Reserved for our next photo together</small>
+        </div>
         <p class="txt" contenteditable="true">Months of consistency and real love have brought us here. By God’s grace, I pray our hearts stay together for a lifetime. You are my dream girl, Patricia, and I promise to love you right and heal every wound the past ever left behind.</p>
       </li>
     </ol>
