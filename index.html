@@ -144,6 +144,23 @@ footer{position:relative;z-index:1}
   color:var(--cream);font-size:.8rem;line-height:1.45;text-align:center;opacity:0;pointer-events:none;
   transition:opacity .35s ease,transform .35s ease;z-index:70;box-shadow:0 18px 40px -20px #000}
 .toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- KCSE success capsule: time lock ---------- */
+#capsule{position:relative;overflow:hidden}
+.lock{position:absolute;inset:0;z-index:6;display:grid;place-items:center;padding:1.15rem;text-align:center;
+ border-radius:var(--radius);background:rgba(26,18,22,.55);
+ -webkit-backdrop-filter:blur(14px) saturate(.9);backdrop-filter:blur(14px) saturate(.9);
+ border:1px solid rgba(201,162,39,.30);transition:opacity .5s ease,visibility .5s ease}
+.lock-in{max-width:22rem;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.lock-ico{width:2rem;height:2rem;color:var(--gold);filter:drop-shadow(0 0 10px rgba(201,162,39,.45))}
+.lock-kicker{font-size:.54rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-soft);margin:0}
+.lock-title{font-family:var(--display);font-size:1.04rem;line-height:1.3;color:var(--cream);margin:0}
+.lock-msg{font-size:.8rem;line-height:1.6;color:var(--ink-soft);margin:0}
+.lock-cd{display:flex;gap:.4rem;align-items:baseline;justify-content:center;margin:.3rem 0 0;color:var(--cream);font-family:var(--display);font-size:1.1rem}
+.lock-cd small{font-family:var(--body);font-size:.48rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)}
+#capsule.locked > *:not(.lock){visibility:hidden}
+#capsule.locked .lock{opacity:1;visibility:visible}
+#capsule:not(.locked) .lock{opacity:0;visibility:hidden;pointer-events:none}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -303,7 +320,20 @@ footer{position:relative;z-index:1}
     <p class="eyebrow rv">KCSE 2027</p>
     <h2 class="rv">For the year you <em>conquer</em></h2>
     <p class="lede rv">Not luck. Preparation, calm, and a heart that knows it is loved.</p>
-    <div class="success rv">
+    <div class="success rv" id="capsule">
+      <div class="lock" id="lock" role="status">
+        <div class="lock-in">
+          <svg class="lock-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="4.6" y="10.4" width="14.8" height="9.9" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.35"/>
+            <path d="M8.1 10.4V7.9a3.9 3.9 0 0 1 7.8 0v2.5" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+            <circle cx="12" cy="15.4" r="1.2" fill="currentColor"/>
+          </svg>
+          <p class="lock-kicker">Sealed until Term 3</p>
+          <h4 class="lock-title">KCSE 2027 Success Capsule &mdash; Locked</h4>
+          <p class="lock-msg">A special good luck &amp; success card from Peter will automatically unlock here when Term 3, 2027 begins.</p>
+          <p class="lock-cd"><b id="lock-d">0</b><small>days</small><b id="lock-h">00</b><small>hrs</small><b id="lock-m">00</b><small>min</small><b id="lock-s">00</b><small>sec</small></p>
+        </div>
+      </div>
       <h3 contenteditable="true">Future KCSE 2027 Star &mdash; Patricia Sitawa</h3>
       <p class="quote">“You have already done the hard part: you kept going.”</p>
       <p class="quote">“Calm hands, clear mind, one paper at a time.”</p>
@@ -345,9 +375,26 @@ footer{position:relative;z-index:1}
       return '<div><b>' + p[1] + '</b><small>' + p[2] + '</small></div>';
     }).join('');
   }
+  var UNLOCK = new Date(2027, 8, 1, 0, 0, 0); // 1 September 2027, start of Term 3
+  var capsule = document.getElementById('capsule');
+  function capsuleState() {
+    if (!capsule) return;
+    var ms = UNLOCK.getTime() - Date.now();
+    var open = ms <= 0;
+    capsule.classList.toggle('locked', !open);
+    var btn = document.getElementById('luck');
+    if (btn) btn.disabled = !open;
+    if (open) return;
+    var set = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+    set('lock-d', Math.floor(ms / 86400000));
+    set('lock-h', pad(Math.floor(ms % 86400000 / 3600000)));
+    set('lock-m', pad(Math.floor(ms % 3600000 / 60000)));
+    set('lock-s', pad(Math.floor(ms % 60000 / 1000)));
+  }
   function tick() {
     paint(document.getElementById('cd-bday'), bday);
     paint(document.getElementById('cd-kcse'), kcse);
+    capsuleState();
   }
   tick();
   setInterval(tick, 1000);
