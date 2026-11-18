@@ -1,0 +1,38 @@
+<!doctype html><html><body style="margin:0;background:#111;color:#0f0;font:12px monospace">
+<iframe id="f" src="index.html" style="width:390px;height:844px;border:0"></iframe>
+<pre id="out">waiting</pre>
+<script>
+function run(w){
+  return new Promise(function(res){
+    var f=document.getElementById('f');
+    f.style.width=w+'px';
+    f.onload=function(){
+      setTimeout(function(){
+        var d=f.contentDocument, win=f.contentWindow;
+        var btn=d.getElementById('luck');
+        var cv=d.getElementById('confetti');
+        var before = win.__burstCount ? win.__burstCount() : -1;
+        btn.click();
+        setTimeout(function(){
+          var mid = win.__burstCount();
+          var ctx=cv.getContext('2d');
+          var px=ctx.getImageData(0,0,cv.width,cv.height).data, painted=0;
+          for(var i=3;i<px.length;i+=4000){ if(px[i]>0) painted++; }
+          var label=btn.textContent.trim();
+          setTimeout(function(){
+            var after=win.__burstCount();
+            var t1=d.querySelector('.letter-title')?d.querySelector('.letter-title').textContent.trim():'MISSING';
+            var t2=d.querySelector('#kcse h3')?d.querySelector('#kcse h3').textContent.trim():'MISSING';
+            var sig=d.querySelector('#kcse .sign')?d.querySelector('#kcse .sign').textContent.trim():'MISSING';
+            res('w='+w+' before='+before+' afterClick='+mid+' painted='+painted+' decayedTo='+after+' label="'+label+'" | letter="'+t1+'" | kcse="'+t2+'" | sign="'+sig+'"');
+          },2200);
+        },600);
+      },900);
+    };
+    f.src='index.html?r='+Math.random();
+  });
+}
+run(390).then(function(a){ return run(1200).then(function(b){
+  document.getElementById('out').textContent='R1 '+a+'\nR2 '+b;
+});});
+</script></body></html>

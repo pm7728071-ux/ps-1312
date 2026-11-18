@@ -104,6 +104,9 @@ footer{padding:3.5rem 0 4rem;text-align:center;color:var(--ink-faint);font-size:
 footer p{margin:.2rem 0}
 footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color:var(--rose);margin-top:.6rem}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+.letter-title{font-family:var(--display);font-size:1.32rem;line-height:1.25;margin:0 0 .85rem;color:var(--cream)}
+.letter-title:focus{outline:none;border-bottom:1px solid rgba(231,154,166,.5)}
+.btn.sent{border-color:var(--gold);color:var(--gold);letter-spacing:.18em}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -213,10 +216,10 @@ footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color
           <small>Tap to open</small>
         </div>
         <div class="letter">
-          <p>My Patricia,</p>
-          <p contenteditable="true">Happy birthday, my love. I hope this year gives you everything you quietly pray for, and I hope I get to watch you receive it. You deserve a day that feels as warm as you make my life feel.</p>
-          <p contenteditable="true">Thank you for choosing me, for staying, and for being the softest part of my days. I am proud of you, and I am not going anywhere.</p>
-          <p class="sign" contenteditable="true">Yours always, Peter</p>
+          <h4 class="letter-title" contenteditable="true">Happy Birthday, My Dream Girl</h4>
+          <p contenteditable="true">Happy Birthday, Patricia! Today is all about celebrating the most amazing, loyal, and loving person in my life. Thank you for choosing me, standing by my side through everything, and being my one and only.</p>
+          <p contenteditable="true">I pray God blesses this new year of your life with endless joy, good health, and every good thing your heart desires. You deserve the world, and I am so grateful to walk beside you.</p>
+          <p class="sign" contenteditable="true">Yours always, Peter.</p>
         </div>
       </div>
     </div>
@@ -229,10 +232,11 @@ footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color
     <h2 class="rv">For the year you <em>conquer</em></h2>
     <p class="lede rv">Not luck. Preparation, calm, and a heart that knows it is loved.</p>
     <div class="success rv">
-      <h3>Success &amp; Good Luck</h3>
+      <h3 contenteditable="true">Future KCSE 2027 Star &mdash; Patricia Sitawa</h3>
       <p class="quote">“You have already done the hard part: you kept going.”</p>
       <p class="quote">“Calm hands, clear mind, one paper at a time.”</p>
-      <p class="note" contenteditable="true">Patricia, when the pressure builds, remember who you are and who is in your corner. I will be here through every revision, every late night and every result. You are going to do this beautifully.</p>
+      <p class="note" contenteditable="true">To my brilliant girl: as you prepare for KCSE 2027, never forget how capable, smart, and unstoppable you are. Even on the days when revision feels heavy or exhausting, remember I am always in your corner cheering you on and praying for your success. Stay focused, trust God, and shine bright&mdash;I already know you are going to make us all proud.</p>
+      <p class="sign" contenteditable="true">With all my love, Peter.</p>
       <button class="btn gold" id="luck">Tap to Send Good Luck</button>
     </div>
   </section>
@@ -325,7 +329,8 @@ footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color
 
   var cv = document.getElementById('confetti');
   var ctx = cv ? cv.getContext('2d') : null;
-  var bits = [], raf = null, dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var bits = [], raf = null, lastT = 0;
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
   function sizeCanvas() {
     if (!cv) return;
     cv.width = Math.floor(window.innerWidth * dpr);
@@ -333,31 +338,42 @@ footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color
   }
   sizeCanvas();
   window.addEventListener('resize', sizeCanvas);
+  window.addEventListener('orientationchange', function () { setTimeout(sizeCanvas, 260); });
   var palette = ['#e79aa6', '#fbf3e9', '#c9a227', '#e0c56a', '#b4596b'];
   function burst() {
-    if (!ctx) return;
+    if (!ctx || reduce) return;
+    if (bits.length > 380) bits.length = 380;
     var w = cv.width, h = cv.height;
-    for (var i = 0; i < 150; i++) {
+    var count = window.innerWidth < 520 ? 85 : 140;
+    for (var i = 0; i < count; i++) {
       bits.push({
         x: w * (0.15 + Math.random() * 0.7),
-        y: h * 0.12,
-        vx: (Math.random() - 0.5) * 9 * dpr,
-        vy: (Math.random() * 4 + 1) * dpr,
-        g: 0.16 * dpr,
-        r: (Math.random() * 5 + 3) * dpr,
+        y: h * 0.1,
+        vx: (Math.random() - 0.5) * 7 * dpr,
+        vy: (Math.random() * 3.4 + 0.8) * dpr,
+        g: 0.13 * dpr,
+        r: (Math.random() * 4.5 + 2.5) * dpr,
         c: palette[Math.floor(Math.random() * palette.length)],
         a: 1,
         rot: Math.random() * Math.PI
       });
     }
-    if (!raf) raf = requestAnimationFrame(loop);
+    if (!raf) { lastT = 0; raf = requestAnimationFrame(loop); }
   }
-  function loop() {
+  function loop(t) {
+    raf = null;
     if (!ctx) return;
+    var dt = lastT ? Math.min(3, (t - lastT) / 16.667) : 1;
+    lastT = t;
     ctx.clearRect(0, 0, cv.width, cv.height);
     for (var i = bits.length - 1; i >= 0; i--) {
       var p = bits[i];
-      p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= 0.995; p.rot += 0.08; p.a -= 0.0055;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += p.g * dt;
+      p.vx *= Math.pow(0.995, dt);
+      p.rot += 0.08 * dt;
+      p.a -= 0.0055 * dt;
       if (p.a <= 0 || p.y > cv.height + 40) { bits.splice(i, 1); continue; }
       ctx.globalAlpha = Math.max(p.a, 0);
       ctx.fillStyle = p.c;
@@ -368,16 +384,27 @@ footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color
       ctx.restore();
     }
     ctx.globalAlpha = 1;
-    if (bits.length) { raf = requestAnimationFrame(loop); }
-    else { raf = null; ctx.clearRect(0, 0, cv.width, cv.height); }
+    if (bits.length && !document.hidden) { raf = requestAnimationFrame(loop); }
+    else { ctx.clearRect(0, 0, cv.width, cv.height); }
   }
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && bits.length && !raf) { lastT = 0; raf = requestAnimationFrame(loop); }
+  });
+  window.__burstCount = function () { return bits.length; };
+
   var luck = document.getElementById('luck');
   if (luck) {
+    var luckTimer = null;
     luck.addEventListener('click', function () {
-      if (reduce) { luck.textContent = 'Good luck, Patricia.'; return; }
       burst();
-      luck.textContent = 'Sent with love';
-      setTimeout(function () { luck.textContent = 'Tap to Send Good Luck'; }, 3200);
+      if (reduce) { luck.textContent = 'Good luck, Patricia.'; return; }
+      luck.textContent = 'Good luck sent';
+      luck.classList.add('sent');
+      clearTimeout(luckTimer);
+      luckTimer = setTimeout(function () {
+        luck.textContent = 'Tap to Send Good Luck';
+        luck.classList.remove('sent');
+      }, 2600);
     });
   }
 })();
