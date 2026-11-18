@@ -392,6 +392,21 @@ footer .sig{font-family:var(--display);font-style:italic;font-size:1.15rem;color
   });
   window.__burstCount = function () { return bits.length; };
 
+  // debug hook: ?cfdebug=1 reports painted pixels in the page title
+  if (location.search.indexOf('cfdebug') > -1) {
+    var origBurst = burst;
+    burst = function () {
+      origBurst();
+      setTimeout(function () {
+        try {
+          var px = ctx.getImageData(0, 0, cv.width, cv.height).data, hit = 0;
+          for (var i = 3; i < px.length; i += 400) { if (px[i] > 0) hit++; }
+          document.title = 'CF painted=' + hit + ' bits=' + bits.length + ' canvas=' + cv.width + 'x' + cv.height;
+        } catch (e) { document.title = 'CF error ' + e.message; }
+      }, 450);
+    };
+  }
+
   var luck = document.getElementById('luck');
   if (luck) {
     var luckTimer = null;
