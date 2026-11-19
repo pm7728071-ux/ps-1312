@@ -176,6 +176,13 @@ footer{position:relative;z-index:1}
   text-align:center;line-height:1.7;padding:0 1rem}
 @keyframes heartGlow{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.08);opacity:1}}
 @media (prefers-reduced-motion:reduce){.photo.emblem svg{animation:none}}
+
+/* ---------- birthday letter: time lock ---------- */
+.env-wrap{position:relative}
+#bd-wrap.locked .env{opacity:.26;filter:blur(2.5px) saturate(.72);pointer-events:none}
+#bd-wrap.locked .env .letter{visibility:hidden}
+#bd-wrap .lock{opacity:1}
+#bd-wrap:not(.locked) .lock{opacity:0;visibility:hidden;pointer-events:none}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -312,7 +319,20 @@ footer{position:relative;z-index:1}
     <p class="eyebrow rv">For your birthday</p>
     <h2 class="rv">A letter, <em>sealed until then</em></h2>
     <p class="lede rv">It opens on 13 December. Tap the envelope when the day comes.</p>
-    <div class="env-wrap">
+    <div class="env-wrap" id="bd-wrap">
+      <div class="lock" id="bd-lock" role="status">
+        <div class="lock-in">
+          <svg class="lock-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="4.6" y="10.4" width="14.8" height="9.9" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.35"/>
+            <path d="M8.1 10.4V7.9a3.9 3.9 0 0 1 7.8 0v2.5" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+            <circle cx="12" cy="15.4" r="1.2" fill="currentColor"/>
+          </svg>
+          <p class="lock-kicker">Sealed until her birthday</p>
+          <h4 class="lock-title">Birthday Letter &mdash; Locked</h4>
+          <p class="lock-msg">A birthday letter from Peter will automatically unlock here on 13 December 2026.</p>
+          <p class="lock-cd"><b id="bd-d">0</b><small>days</small><b id="bd-h">00</b><small>hrs</small><b id="bd-m">00</b><small>min</small><b id="bd-s">00</b><small>sec</small></p>
+        </div>
+      </div>
       <div class="env rv" id="env" role="button" tabindex="0" aria-expanded="false" aria-label="Open the birthday letter">
         <div class="front">
           <b>Open on December 13th</b>
@@ -390,20 +410,41 @@ footer{position:relative;z-index:1}
     }).join('');
   }
   var UNLOCK = new Date(2027, 8, 1, 0, 0, 0); // 1 September 2027, start of Term 3
+  var BDAY_UNLOCK = new Date(2026, 11, 13, 0, 0, 0); // 13 December 2026, her birthday
   var capsule = document.getElementById('capsule');
-  function capsuleState() {
-    if (!capsule) return;
-    var ms = UNLOCK.getTime() - Date.now();
+  var bdWrap = document.getElementById('bd-wrap');
+
+  function applyLock(el, when, prefix, onState) {
+    if (!el) return;
+    var ms = when.getTime() - Date.now();
     var open = ms <= 0;
-    capsule.classList.toggle('locked', !open);
-    var btn = document.getElementById('luck');
-    if (btn) btn.disabled = !open;
+    el.classList.toggle('locked', !open);
+    if (onState) onState(open);
     if (open) return;
-    var set = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
-    set('lock-d', Math.floor(ms / 86400000));
-    set('lock-h', pad(Math.floor(ms % 86400000 / 3600000)));
-    set('lock-m', pad(Math.floor(ms % 3600000 / 60000)));
-    set('lock-s', pad(Math.floor(ms % 60000 / 1000)));
+    var set = function (suffix, v) {
+      var node = document.getElementById(prefix + suffix);
+      if (node) node.textContent = v;
+    };
+    set('d', Math.floor(ms / 86400000));
+    set('h', pad(Math.floor(ms % 86400000 / 3600000)));
+    set('m', pad(Math.floor(ms % 3600000 / 60000)));
+    set('s', pad(Math.floor(ms % 60000 / 1000)));
+  }
+
+  function capsuleState() {
+    applyLock(capsule, UNLOCK, 'lock-', function (open) {
+      var btn = document.getElementById('luck');
+      if (btn) btn.disabled = !open;
+    });
+    applyLock(bdWrap, BDAY_UNLOCK, 'bd-', function (open) {
+      var e = document.getElementById('env');
+      if (!e) return;
+      e.setAttribute('aria-disabled', open ? 'false' : 'true');
+      if (!open && e.classList.contains('open')) {
+        e.classList.remove('open');
+        e.setAttribute('aria-expanded', 'false');
+      }
+    });
   }
   function tick() {
     paint(document.getElementById('cd-bday'), bday);
@@ -436,6 +477,7 @@ footer{position:relative;z-index:1}
 
   var env = document.getElementById('env');
   function toggleEnv() {
+    if (bdWrap && bdWrap.classList.contains('locked')) return;
     var open = env.classList.toggle('open');
     env.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
